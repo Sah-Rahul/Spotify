@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv"
 import { connectDB } from "./db.config";
 import userRouter from "./user.routes";
+import cookieParser from "cookie-parser"
 dotenv.config()
 
 const app = express();
@@ -12,6 +13,9 @@ app.get('/', (req,res) =>{
   res.send("server is running...")
 })
 
+app.use(express.json())
+app.use(cookieParser())
+app.use(express.urlencoded({ extended: true}))
 app.use("/api/v1/user", userRouter)
 
 app.listen(PORT, () => {

@@ -38,5 +38,13 @@ const UserSchema = new mongoose_1.Schema({
     username: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-});
-exports.default = mongoose_1.default.model("User", UserSchema);
+    role: { type: String, default: "user" },
+    playlist: [
+        {
+            type: String,
+            required: true,
+        },
+    ],
+}, { timestamps: true });
+const userModel = mongoose_1.default.model("User", UserSchema);
+exports.default = userModel;
