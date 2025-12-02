@@ -114,3 +114,77 @@ export const addSong = TryCatch(
     });
   }
 );
+
+export const addThumbnail = TryCatch(
+  async (req: AuthenticatedRequest, res: Response) => {
+    if (req.user?.role !== "admin") {
+      return res.status(403).json({
+        message: "Only admin can update song thumbnails",
+      });
+    }
+
+    const songId = req.params.id;
+    const song = await NEONDB`SELECT * FROM songs WHERE id = ${songId}`;
+
+    if (song.length === 0) {
+      return res.status(404).json({ message: "Song not found" });
+    }
+
+    const file = req.file;
+    if (!file) {
+      return res.status(400).json({
+        message: "Thumbnail image is required",
+      });
+    }
+
+    const fileBuffer = getBuffer(file);
+    if (!fileBuffer) {
+      return res.status(400).json({
+        message: "Invalid file buffer",
+      });
+    }
+
+    const uploaded = await cloudinary.uploader.upload(fileBuffer, {
+      folder: "spotify-songs-thumbnails",
+    });
+
+    const result = await NEONDB`
+      UPDATE songs
+      SET thumbnail = ${uploaded.secure_url}
+      WHERE id = ${songId}
+      RETURNING *;
+    `;
+
+    const updatedSong = result[0];
+
+    return res.status(200).json({
+      message: "Thumbnail added successfully",
+      song: updatedSong,
+    });
+  }
+);
+
+export const deleteAlbum = TryCatch(
+  async (req: AuthenticatedRequest, res: Response) => {
+    if (req.user?.role !== "admin") {
+      return res.status(403).json({
+        message: "Only admin can delete albums",
+      });
+    }
+
+    const { id } = req.params;
+
+    const album = await NEONDB`SELECT * FROM albums WHERE id = ${id}`;
+    if (album.length === 0) {
+      return res.status(404).json({ message: "Album not found" });
+    }
+
+    await NEONDB`DELETE FROM songs WHERE album_id = ${id}`;
+
+    await NEONDB`DELETE FROM albums WHERE id = ${id}`;
+
+    return res.status(200).json({
+      message: "Album and its songs deleted successfully",
+    });
+  }
+);
