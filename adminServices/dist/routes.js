@@ -10,6 +10,7 @@ const multer_js_1 = __importDefault(require("./multer.js"));
 const adminRouter = (0, express_1.Router)();
 adminRouter.post("/album/new", middleware_js_1.isAuth, multer_js_1.default.single("thumbnail"), controller_js_1.addAlbum);
 adminRouter.post("/song/new", middleware_js_1.isAuth, multer_js_1.default.single("audio"), controller_js_1.addSong);
-adminRouter.patch("/song/:id/thumbnail", middleware_js_1.isAuth, multer_js_1.default.single("thumbnail"), controller_js_1.addThumbnail);
+adminRouter.patch("/song/:id", middleware_js_1.isAuth, multer_js_1.default.single("thumbnail"), controller_js_1.addThumbnail);
 adminRouter.delete("/album/:id", middleware_js_1.isAuth, controller_js_1.deleteAlbum);
+adminRouter.delete("/song/:id", middleware_js_1.isAuth, controller_js_1.deleteSong);
 exports.default = adminRouter;

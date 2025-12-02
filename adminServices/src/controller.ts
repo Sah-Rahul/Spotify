@@ -124,9 +124,10 @@ export const addThumbnail = TryCatch(
     }
 
     const songId = req.params.id;
+
     const song = await NEONDB`SELECT * FROM songs WHERE id = ${songId}`;
 
-    if (song.length === 0) {
+    if (!song.length) {
       return res.status(404).json({ message: "Song not found" });
     }
 
@@ -175,6 +176,7 @@ export const deleteAlbum = TryCatch(
     const { id } = req.params;
 
     const album = await NEONDB`SELECT * FROM albums WHERE id = ${id}`;
+
     if (album.length === 0) {
       return res.status(404).json({ message: "Album not found" });
     }
@@ -185,6 +187,29 @@ export const deleteAlbum = TryCatch(
 
     return res.status(200).json({
       message: "Album and its songs deleted successfully",
+    });
+  }
+);
+
+export const deleteSong = TryCatch(
+  async (req: AuthenticatedRequest, res: Response) => {
+    if (req.user?.role !== "admin") {
+      return res.status(403).json({
+        message: "Only admin can delete songs",
+      });
+    }
+
+    const { id } = req.params;
+
+    const song = await NEONDB`SELECT * FROM songs WHERE id = ${id}`;
+    if (song.length === 0) {
+      return res.status(404).json({ message: "Song not found" });
+    }
+
+    await NEONDB`DELETE FROM songs WHERE id = ${id}`;
+
+    return res.status(200).json({
+      message: "Song deleted successfully",
     });
   }
 );

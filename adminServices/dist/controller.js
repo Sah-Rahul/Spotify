@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteAlbum = exports.addThumbnail = exports.addSong = exports.addAlbum = void 0;
+exports.deleteSong = exports.deleteAlbum = exports.addThumbnail = exports.addSong = exports.addAlbum = void 0;
 const cloudinary_config_js_1 = __importDefault(require("./config/cloudinary.config.js"));
 const DataUri_js_1 = __importDefault(require("./config/DataUri.js"));
 const db_js_1 = require("./config/db.js");
@@ -97,7 +97,7 @@ exports.addThumbnail = (0, TryCatch_js_1.default)(async (req, res) => {
     }
     const songId = req.params.id;
     const song = await (0, db_js_1.NEONDB) `SELECT * FROM songs WHERE id = ${songId}`;
-    if (song.length === 0) {
+    if (!song.length) {
         return res.status(404).json({ message: "Song not found" });
     }
     const file = req.file;
@@ -142,5 +142,21 @@ exports.deleteAlbum = (0, TryCatch_js_1.default)(async (req, res) => {
     await (0, db_js_1.NEONDB) `DELETE FROM albums WHERE id = ${id}`;
     return res.status(200).json({
         message: "Album and its songs deleted successfully",
+    });
+});
+exports.deleteSong = (0, TryCatch_js_1.default)(async (req, res) => {
+    if (req.user?.role !== "admin") {
+        return res.status(403).json({
+            message: "Only admin can delete songs",
+        });
+    }
+    const { id } = req.params;
+    const song = await (0, db_js_1.NEONDB) `SELECT * FROM songs WHERE id = ${id}`;
+    if (song.length === 0) {
+        return res.status(404).json({ message: "Song not found" });
+    }
+    await (0, db_js_1.NEONDB) `DELETE FROM songs WHERE id = ${id}`;
+    return res.status(200).json({
+        message: "Song deleted successfully",
     });
 });
