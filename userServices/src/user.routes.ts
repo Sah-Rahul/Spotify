@@ -1,4 +1,4 @@
-import Router from "express"
+import { Router } from "express";
 import { loginUser, myProfile, registerUser } from "./user.controller"
 import { isAuthenticated } from "./middleware"
 

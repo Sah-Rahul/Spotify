@@ -14,15 +14,27 @@ export interface AuthRequest extends Request {
 
 export const isAuthenticated = TryCatch(
   async (req: AuthRequest, res: Response, next: NextFunction) => {
-    const token = req.cookies?.token;
+    let token = req.cookies?.token;
+
+    if (!token && req.headers.authorization) {
+      const authHeader = req.headers.authorization;
+      if (authHeader.startsWith("Bearer ")) {
+        token = authHeader.split(" ")[1];
+      }
+    }
 
     if (!token) {
       return res.status(401).json({ message: "Not authenticated" });
     }
 
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
-      req.userId = decoded.id;  
+      const decoded = jwt.verify(
+        token,
+        process.env.JWT_SECRET as string
+      ) as JwtPayload;
+
+      req.userId = decoded.id;
+
       next();
     } catch (err) {
       return res.status(401).json({ message: "Invalid or expired token" });

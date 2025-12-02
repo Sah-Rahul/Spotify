@@ -7,7 +7,13 @@ exports.isAuthenticated = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const TryCatch_1 = __importDefault(require("./TryCatch"));
 exports.isAuthenticated = (0, TryCatch_1.default)(async (req, res, next) => {
-    const token = req.cookies?.token;
+    let token = req.cookies?.token;
+    if (!token && req.headers.authorization) {
+        const authHeader = req.headers.authorization;
+        if (authHeader.startsWith("Bearer ")) {
+            token = authHeader.split(" ")[1];
+        }
+    }
     if (!token) {
         return res.status(401).json({ message: "Not authenticated" });
     }

@@ -2,6 +2,8 @@ import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
 import { NEONDB } from "./config/db.js";
+import adminRouter from "./routes.js"
+import cookieParser from "cookie-parser";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -39,9 +41,16 @@ const initDB = () => {
 
 initDB();
 
+
+app.use(express.json())
+app.use(cookieParser())
+app.use(express.urlencoded({ extended: true}))
+
 app.get("/", (req, res) => {
   res.send("adminServer is running...");
 });
+
+app.use('/api/v1', adminRouter)
 
 app.listen(PORT, () => {
   console.log(`server is running on port ${PORT}`);
