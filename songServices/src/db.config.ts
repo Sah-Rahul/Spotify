@@ -1,11 +1,6 @@
-import mongoose from "mongoose";
+import { neon } from "@neondatabase/serverless"
 
-export const connectDB = async () => {
-  try {
-    await mongoose.connect(process.env.MONGODB_URI!);
-    console.log("✅ MongoDB connected successfully");
-  } catch (err) {
-    console.error("❌ MongoDB connection error:", err);
-    process.exit(1);
-  }
-};
+import dotenv from "dotenv"
+dotenv.config()
+
+export const NEONDB = neon(process.env.NEON_DB_URL as string)

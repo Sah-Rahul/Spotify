@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const controller_1 = require("./controller");
+const songRouter = (0, express_1.Router)();
+songRouter.get("/album/all", controller_1.getAllAlbums);
+songRouter.get("/song/all", controller_1.getAllSongs);
+songRouter.get("/album/:id", controller_1.getAllSongsOfAlbum);
+songRouter.get("/song/:id", controller_1.getSingleSong);
+exports.default = songRouter;
