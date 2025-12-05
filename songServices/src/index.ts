@@ -2,7 +2,8 @@ import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import songRouter from "./routes";
-import { createClient } from "redis";
+import { createClient } from "redis";``
+import cors from "cors"
 
 dotenv.config();
 
@@ -30,6 +31,12 @@ app.get("/", (req, res) => {
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors(
+  {
+    origin: "*",
+    credentials: true
+  }
+))
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/v1", songRouter);

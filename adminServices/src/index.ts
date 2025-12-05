@@ -4,9 +4,27 @@ import express from "express";
 import { NEONDB } from "./config/db.js";
 import adminRouter from "./routes.js"
 import cookieParser from "cookie-parser";
+import { createClient } from "redis";``
+import cors from "cors"
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+export const redisClient = createClient({
+  password: process.env.REDIS_PASSWORD,
+  socket: {
+    host: "redis-10508.c240.us-east-1-3.ec2.cloud.redislabs.com",
+    port: 10508,
+  },
+});
+
+redisClient
+  .connect()
+  .then(() => console.log("redis connected"))
+  .catch((err) => {
+    console.log("Redis error:", err.message);
+  });
+
 
 const initDB = () => {
   NEONDB`
@@ -44,6 +62,12 @@ initDB();
 
 app.use(express.json())
 app.use(cookieParser())
+app.use(cors(
+  {
+    origin: "*",
+    credentials: true
+  }
+))
 app.use(express.urlencoded({ extended: true}))
 
 app.get("/", (req, res) => {

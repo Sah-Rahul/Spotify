@@ -7,6 +7,7 @@ exports.deleteSong = exports.deleteAlbum = exports.addThumbnail = exports.addSon
 const cloudinary_config_js_1 = __importDefault(require("./config/cloudinary.config.js"));
 const DataUri_js_1 = __importDefault(require("./config/DataUri.js"));
 const db_js_1 = require("./config/db.js");
+const index_js_1 = require("./index.js");
 const TryCatch_js_1 = __importDefault(require("./TryCatch.js"));
 exports.addAlbum = (0, TryCatch_js_1.default)(async (req, res) => {
     if (req.user?.role !== "admin") {
@@ -41,6 +42,9 @@ exports.addAlbum = (0, TryCatch_js_1.default)(async (req, res) => {
   RETURNING *;
 `;
     const album = result[0];
+    if (index_js_1.redisClient.isReady) {
+        await index_js_1.redisClient.del("albums");
+    }
     return res.status(201).json({
         message: "Album created successfully",
         album,
@@ -84,6 +88,9 @@ exports.addSong = (0, TryCatch_js_1.default)(async (req, res) => {
       RETURNING *;
     `;
     const song = result[0];
+    if (index_js_1.redisClient.isReady) {
+        await index_js_1.redisClient.del("songs");
+    }
     return res.status(201).json({
         message: "Song added successfully",
         song,

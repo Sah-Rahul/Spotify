@@ -1,14 +1,17 @@
 import cloudinary from "./config/cloudinary.config.js";
 import getBuffer from "./config/DataUri.js";
 import { NEONDB } from "./config/db.js";
+import { redisClient } from "./index.js";
 import TryCatch from "./TryCatch.js";
 import { Request, Response } from "express";
+import multer from "multer";
 
 interface AuthenticatedRequest extends Request {
   user?: {
     _id: string;
     role: string;
   };
+  file?: Express.Multer.File;
 }
 
 export const addAlbum = TryCatch(
@@ -53,6 +56,9 @@ export const addAlbum = TryCatch(
 
     const album = result[0];
 
+    if (redisClient.isReady) {
+      await redisClient.del("albums");
+    }
     return res.status(201).json({
       message: "Album created successfully",
       album,
@@ -107,6 +113,10 @@ export const addSong = TryCatch(
     `;
 
     const song = result[0];
+
+    if (redisClient.isReady) {
+      await redisClient.del("songs");
+    }
 
     return res.status(201).json({
       message: "Song added successfully",

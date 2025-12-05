@@ -9,6 +9,8 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const routes_1 = __importDefault(require("./routes"));
 const redis_1 = require("redis");
+``;
+const cors_1 = __importDefault(require("cors"));
 dotenv_1.default.config();
 exports.redisClient = (0, redis_1.createClient)({
     password: process.env.REDIS_PASSWORD,
@@ -30,6 +32,10 @@ app.get("/", (req, res) => {
 });
 app.use(express_1.default.json());
 app.use((0, cookie_parser_1.default)());
+app.use((0, cors_1.default)({
+    origin: "*",
+    credentials: true
+}));
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use("/api/v1", routes_1.default);
 app.listen(PORT, () => {
