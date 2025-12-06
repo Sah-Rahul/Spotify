@@ -5,9 +5,7 @@ const songRouter = Router()
 
 songRouter.get("/album/all",  getAllAlbums) 
 songRouter.get("/song/all",  getAllSongs) 
-songRouter.get("/album/:id",  getAllSongsOfAlbum) 
-songRouter.get("/song/:id",  getSingleSong
-
-) 
+songRouter.get("/album/:id",  getAllSongsOfAlbum)
+songRouter.get("/song/:id",  getSingleSong)
 
 export default songRouter
