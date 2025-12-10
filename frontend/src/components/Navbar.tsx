@@ -1,7 +1,14 @@
 import React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useUserData } from "../Context/UserContext";
 
 const Navbar: React.FC = () => {
+  const { isAuth, logout } = useUserData();
+
+  const handleLogout = async () => {
+    await logout();
+  };
+
   return (
     <div className="flex items-center justify-between mb-4">
       <div className="flex items-center gap-4">
@@ -36,9 +43,14 @@ const Navbar: React.FC = () => {
           Install App
         </button>
 
-        <button className="px-4 py-1 rounded-full bg-white text-black text-sm font-medium">
-          Logout
-        </button>
+        {isAuth && (
+          <button
+            onClick={handleLogout}
+            className="px-4 py-1 rounded-full cursor-pointer bg-green-500 text-white text-sm font-medium hover:scale-105 transition"
+          >
+            Logout
+          </button>
+        )}
       </div>
     </div>
   );

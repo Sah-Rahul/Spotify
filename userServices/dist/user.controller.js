@@ -47,19 +47,16 @@ exports.registerUser = (0, TryCatch_1.default)(async (req, res) => {
 });
 exports.loginUser = (0, TryCatch_1.default)(async (req, res) => {
     const { email, password } = req.body;
-    if (!email || !password) {
+    if (!email || !password)
         return res.status(400).json({ message: "All fields are required" });
-    }
     const user = await model_1.default.findOne({ email });
-    if (!user) {
+    if (!user)
         return res
             .status(400)
             .json({ message: "User doesn't exist with this email." });
-    }
     const isMatch = await bcrypt_1.default.compare(password, user.password);
-    if (!isMatch) {
+    if (!isMatch)
         return res.status(401).json({ message: "Incorrect password" });
-    }
     const token = jsonwebtoken_1.default.sign({ id: user._id }, process.env.JWT_SECRET, {
         expiresIn: "1h",
     });
@@ -67,20 +64,18 @@ exports.loginUser = (0, TryCatch_1.default)(async (req, res) => {
         .status(200)
         .cookie("token", token, {
         httpOnly: true,
-        sameSite: "strict",
-        maxAge: 1 * 60 * 60 * 1000, // 1 hour
+        secure: false, // localhost
+        sameSite: "lax",
+        maxAge: 60 * 60 * 1000, // 1 hour
     })
         .json({
         message: "Login successful",
-        data: {
-            user: {
-                id: user._id,
-                username: user.username,
-                email: user.email,
-                role: user.role,
-                playlist: user.playlist,
-            },
-            token,
+        user: {
+            _id: user._id,
+            name: user.username,
+            email: user.email,
+            role: user.role,
+            playlist: user.playlist,
         },
     });
 });

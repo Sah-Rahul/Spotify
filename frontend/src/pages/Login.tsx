@@ -1,17 +1,22 @@
 import React, { useState } from "react";
+import { useUserData } from "../Context/UserContext";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const { login, loginLoading } = useUserData();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Email:", email);
-    console.log("Password:", password);
+    if (!email || !password) return;
+
+    await login(email, password);
   };
 
   return (
-    <div className="h-screen flex items-center justify-center bg-black">
+    <div className="h-screen flex flex-col items-center justify-center bg-black">
       <form
         onSubmit={handleSubmit}
         className="bg-transparent flex flex-col gap-4 w-96"
@@ -40,11 +45,21 @@ const Login = () => {
 
         <button
           type="submit"
-          className="bg-green-500 cursor-pointer text-black font-semibold p-3 rounded-full mt-2"
+          className={`bg-green-500 text-black font-semibold p-3 rounded-full mt-2 ${
+            loginLoading ? "opacity-70 cursor-not-allowed" : "cursor-pointer"
+          }`}
+          disabled={loginLoading}
         >
-          Login
+          {loginLoading ? "Logging in..." : "Login"}
         </button>
       </form>
+
+      <p className="text-white mt-4">
+        Don't have an account?{" "}
+        <Link to={"/register"} className="text-green-500">
+          Register
+        </Link>
+      </p>
     </div>
   );
 };
