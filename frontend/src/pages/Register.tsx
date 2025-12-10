@@ -1,18 +1,20 @@
-import React, { useState } from "react"; 
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { useUserData } from "../Context/UserContext";
 
 const Register = () => {
-  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [registerLoading, setRegisterLoading] = useState(false);
 
   const navigate = useNavigate();
+  const { register } = useUserData();
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !email || !password) {
+    if (!username || !email || !password) {
       toast.error("All fields are required");
       return;
     }
@@ -20,17 +22,8 @@ const Register = () => {
     setRegisterLoading(true);
 
     try {
-      const res = await fetch("http://localhost:3000/api/v1/user/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
-      });
+      await register(username, email, password);
 
-      const data = await res.json();
-
-      if (!res.ok) throw new Error(data.message || "Registration failed");
-
-      toast.success("Registration successful! Please login.");
       navigate("/login");
     } catch (err: any) {
       toast.error(err.message || "Registration failed");
@@ -49,13 +42,13 @@ const Register = () => {
           Register to Spotify
         </h2>
 
-        <label className="text-white text-sm">Name</label>
+        <label className="text-white text-sm">Username</label>
         <input
           type="text"
-          placeholder="Enter your name"
+          placeholder="Enter your username"
           className="w-full p-3 rounded-lg bg-[#1f2937] text-white outline-none"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
         />
 
         <label className="text-white text-sm">Email</label>
@@ -88,7 +81,10 @@ const Register = () => {
       </form>
 
       <p className="text-white mt-4">
-        Already have an account? <Link to="/login" className="text-green-500">Login</Link>
+        Already have an account?{" "}
+        <Link to="/login" className="text-green-500">
+          Login
+        </Link>
       </p>
     </div>
   );
