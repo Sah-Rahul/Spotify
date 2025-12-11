@@ -7,6 +7,8 @@ import Loading from "./components/Loading";
 import { Toaster } from "react-hot-toast";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Album from "./pages/Album";
+import Playlist from "./components/Playlist";
+import Dashboard from "./pages/Dashboard";
 
 const App = () => {
   const { loading, isAuth } = useUserData();
@@ -26,6 +28,8 @@ const App = () => {
         />
 
         <Route path="/album/:id" element={<Album />} />
+        <Route path="/playlist" element={<Playlist />} />
+        <Route path="/admin/dashboard" element={<Dashboard />} />
 
         <Route
           path="/login"
