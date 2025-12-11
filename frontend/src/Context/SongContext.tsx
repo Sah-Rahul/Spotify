@@ -13,7 +13,7 @@ export interface Song {
   id: string;
   title: string;
   description: string;
-  thumbnail: string;
+  thumbnail?: string;
   audio: string;
   album: string;
 }
