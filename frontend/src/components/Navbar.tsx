@@ -9,14 +9,23 @@ const Navbar: React.FC = () => {
     await logout();
   };
 
+  const handlePrev = () => {
+    window.history.back();
+  };
+
+  const handleNext = () => {
+    window.history.forward();
+  };
+
+
   return (
     <div className="flex items-center justify-between mb-4">
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
-          <button className="bg-black/40 p-2 rounded-full hover:bg-black/60">
+          <button onClick={handlePrev} className="bg-black/40 cursor-pointer p-2 rounded-full hover:bg-black/60">
             <ChevronLeft size={20} />
           </button>
-          <button className="bg-black/40 p-2 rounded-full hover:bg-black/60">
+          <button onClick={handleNext} className="bg-black/40 cursor-pointer p-2 rounded-full hover:bg-black/60">
             <ChevronRight size={20} />
           </button>
         </div>

@@ -6,6 +6,7 @@ import { useUserData } from "./Context/UserContext";
 import Loading from "./components/Loading";
 import { Toaster } from "react-hot-toast";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Album from "./pages/Album";
 
 const App = () => {
   const { loading, isAuth } = useUserData();
@@ -23,6 +24,8 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+
+        <Route path="/album/:id" element={<Album />} />
 
         <Route
           path="/login"

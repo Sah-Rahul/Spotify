@@ -1,14 +1,17 @@
-import { Bookmark, House,   Search } from "lucide-react";
+import { Bookmark, House, Search } from "lucide-react";
 import React from "react";
 import PlayListCard from "./PlayListCard";
+import { Link } from "react-router-dom";
 
 const Sidebar: React.FC = () => {
   return (
     <div className="w-60 bg-black text-gray-300 p-4 hidden lg:block h-full">
       <ul className="space-y-4">
-        <li className="flex items-center gap-3 hover:text-white cursor-pointer">
+
+        <Link to={'/'} className="flex items-center gap-3 hover:text-white cursor-pointer">
           <House size={20} /> Home
-        </li>
+        </Link>
+
 
         <li className="flex items-center gap-3 hover:text-white cursor-pointer">
           <Search size={20} /> Search
