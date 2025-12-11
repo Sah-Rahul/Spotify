@@ -76,9 +76,8 @@ export const loginUser = TryCatch(async (req, res) => {
     .status(200)
     .cookie("token", token, {
       httpOnly: true,
-      secure: false, // localhost
-      sameSite: "lax",
-      maxAge: 60 * 60 * 1000, // 1 hour
+      sameSite: "strict",
+      maxAge: 3 * 24 * 60 * 60 * 1000, // 3 days
     })
     .json({
       message: "Login successful",
@@ -120,3 +119,39 @@ export const myProfile = TryCatch(async (req: AuthRequest, res: Response) => {
     data: user,
   });
 });
+
+export const addToPlaylist = TryCatch(async (req: AuthRequest, res) => {
+  const userId = req.userId;
+
+  if (!userId) {
+    return res.status(401).json({ message: "Not authenticated" });
+  }
+
+  const user = await userModel.findById(userId);
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  const songId = req.params.id;
+
+
+  if (user.playlist.includes(songId)) {
+    const index = user.playlist.indexOf(songId);
+    user.playlist.splice(index, 1);
+
+    await user.save();
+
+    return res.json({
+      message: "Removed from playlist",
+    });
+  }
+
+
+  user.playlist.push(songId);
+  await user.save();
+
+  return res.json({
+    message: "Added to playlist",
+  });
+}
+);

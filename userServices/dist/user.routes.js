@@ -8,4 +8,5 @@ userRouter.post("/register", user_controller_1.registerUser);
 userRouter.post("/login", user_controller_1.loginUser);
 userRouter.get("/me", middleware_1.isAuthenticated, user_controller_1.myProfile);
 userRouter.post("/logout", user_controller_1.logOut);
+userRouter.post("/song/:id", middleware_1.isAuthenticated, user_controller_1.addToPlaylist);
 exports.default = userRouter;

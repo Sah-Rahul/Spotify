@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.myProfile = exports.logOut = exports.loginUser = exports.registerUser = void 0;
+exports.addToPlaylist = exports.myProfile = exports.logOut = exports.loginUser = exports.registerUser = void 0;
 const TryCatch_1 = __importDefault(require("./TryCatch"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
@@ -64,9 +64,8 @@ exports.loginUser = (0, TryCatch_1.default)(async (req, res) => {
         .status(200)
         .cookie("token", token, {
         httpOnly: true,
-        secure: false, // localhost
-        sameSite: "lax",
-        maxAge: 60 * 60 * 1000, // 1 hour
+        sameSite: "strict",
+        maxAge: 3 * 24 * 60 * 60 * 1000, // 3 days
     })
         .json({
         message: "Login successful",
@@ -100,5 +99,29 @@ exports.myProfile = (0, TryCatch_1.default)(async (req, res) => {
     res.status(200).json({
         message: "User profile fetched successfully",
         data: user,
+    });
+});
+exports.addToPlaylist = (0, TryCatch_1.default)(async (req, res) => {
+    const userId = req.userId;
+    if (!userId) {
+        return res.status(401).json({ message: "Not authenticated" });
+    }
+    const user = await model_1.default.findById(userId);
+    if (!user) {
+        return res.status(404).json({ message: "User not found" });
+    }
+    const songId = req.params.id;
+    if (user.playlist.includes(songId)) {
+        const index = user.playlist.indexOf(songId);
+        user.playlist.splice(index, 1);
+        await user.save();
+        return res.json({
+            message: "Removed from playlist",
+        });
+    }
+    user.playlist.push(songId);
+    await user.save();
+    return res.json({
+        message: "Added to playlist",
     });
 });

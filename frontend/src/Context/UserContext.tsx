@@ -11,7 +11,7 @@ const server = "http://localhost:3000";
 
 export interface User {
   _id: string;
-  username: string; // <-- use username, not name
+  username: string;
   email: string;
   role: string;
   playlist: string[];
@@ -25,6 +25,7 @@ interface UserContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   register: (username: string, email: string, password: string) => Promise<void>;
+  addToPlaylist: (songId: string) => Promise<void>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -98,6 +99,40 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     }
   };
 
+  const addToPlaylist = async (songId: string) => {
+    if (!user) {
+      toast.error("Please login first");
+      return;
+    }
+
+    try {
+      const res = await fetch(`${server}/api/v1/user/song/${songId}`, {
+        method: "POST",
+        credentials: "include",
+      });
+
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Something went wrong");
+
+      toast.success(data.message);
+
+
+      setUser((prev) =>
+        prev
+          ? {
+            ...prev,
+            playlist: data.message.includes("Removed")
+              ? prev.playlist.filter((id) => id !== songId)
+              : [...prev.playlist, songId],
+          }
+          : prev
+      );
+    } catch (err: any) {
+      toast.error(err.message);
+    }
+  };
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -108,7 +143,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         if (!res.ok) throw new Error("Failed to fetch user");
 
         const data = await res.json();
-        setUser(data.data); // backend returns { data: user }
+        setUser(data.data);
         setAuth(true);
       } catch {
         setUser(null);
@@ -123,7 +158,16 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
   return (
     <UserContext.Provider
-      value={{ user, loading, isAuth, loginLoading, login, logout, register }}
+      value={{
+        user,
+        loading,
+        isAuth,
+        loginLoading,
+        login,
+        logout,
+        register,
+        addToPlaylist,
+      }}
     >
       {children}
     </UserContext.Provider>
