@@ -54,7 +54,7 @@ const AddSongForm: React.FC<AddSongFormProps> = ({ songToEdit, onSuccess }) => {
         return;
       }
 
-      const newSong: Song = data;
+      const newSong: Song = data.song;
 
       if (onSuccess) onSuccess(newSong);
 
@@ -102,19 +102,19 @@ const AddSongForm: React.FC<AddSongFormProps> = ({ songToEdit, onSuccess }) => {
         ))}
       </select>
 
-      <input
+      {/* <input
         type="file"
         accept="audio/*"
         onChange={(e) => setAudio(e.target.files?.[0] || null)}
         className="p-2 bg-[#333] text-white rounded"
-      />
+      /> */}
 
-      {/* <input
+      <input
         type="file"
         accept="image/*"
         onChange={(e) => setThumbnail(e.target.files?.[0] || null)}
         className="p-2 bg-[#333] text-white rounded"
-      /> */}
+      />
 
       <button
         className="bg-blue-500 py-2 rounded text-black font-bold"

@@ -25,7 +25,7 @@ const SongCard: React.FC<{ song: Song }> = ({ song }) => {
         className="rounded-md w-full h-40 object-cover"
       />
 
-      <p className="text-white font-semibold mt-3 truncate">{song.title}</p>
+      {/* <p className="text-white font-semibold mt-3 truncate">{song.title}</p> */}
       <p className="text-gray-400 text-sm truncate">{song.description}</p>
 
 
